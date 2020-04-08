@@ -38,7 +38,7 @@ fun_waiting () {
 		pid=$(cat "$PATH_PID")
 		while [ -e /proc/$pid ]
 		do
-			sleep .6
+			sleep 5
 		done
 	fi
 }
