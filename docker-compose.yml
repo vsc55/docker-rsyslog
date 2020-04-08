@@ -1,0 +1,10 @@
+version: "3"
+services:
+    rsyslog:
+        image: vsc55/rsyslog:later
+        ports:
+            - "514:514/udp"
+            - "514:514/tcp"
+        volumes:
+            - ./log:/var/log
+            - ./data:/data
