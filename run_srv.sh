@@ -26,7 +26,7 @@ PATH_DATA=/data
 PATH_CONF=$PATH_DATA/rsyslog.conf
 PATH_PID=/var/run/rsyslog.pid
 
-fun_fix_port() {
+fun_update_config () {
 	if [[ -f "$PATH_CONF" ]]; then
 		sed -i "/input(type=\"imudp\"/c input(type=\"imudp\" port=\"${UDP_PORT}\")" "$PATH_CONF"
 		sed -i "/input(type=\"imtcp\"/c input(type=\"imtcp\" port=\"${TCP_PORT}\")" "$PATH_CONF"
@@ -49,9 +49,9 @@ if [[ -f "$EXEC_EXTERNAL" ]]; then
 else
 	echo "Starting service..."
 
-	fun_fix_port
+	fun_update_config
 
-	EXEC_SRV_ARGS="-i $PATH_PID
+	EXEC_SRV_ARGS="-i $PATH_PID"
 	if [[ -f "$PATH_CONF" ]]; then
 		EXEC_SRV_ARGS="$EXEC_SRV_ARGS -f $PATH_CONF"
 	fi
