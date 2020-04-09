@@ -27,10 +27,17 @@ PATH_CONF=$PATH_DATA/rsyslog.conf
 PATH_PID=/var/run/rsyslog.pid
 
 fun_update_config () {
+	echo "Update Config..."
 	if [[ -f "$PATH_CONF" ]]; then
+		echo "SET INPUT PORT UDP: $UDP_PORT"
+		echo "SET INPUT PORT TCP: $TCP_PORT"
 		sed -i "/input(type=\"imudp\"/c input(type=\"imudp\" port=\"${UDP_PORT}\")" "$PATH_CONF"
 		sed -i "/input(type=\"imtcp\"/c input(type=\"imtcp\" port=\"${TCP_PORT}\")" "$PATH_CONF"
+	else 
+		echo "ERROR: File config not exist!!"
+		return 1
 	fi
+	return 0
 }
 
 fun_waiting () {
@@ -47,9 +54,9 @@ if [[ -f "$EXEC_EXTERNAL" ]]; then
 	echo "*** RUN EXTERNAL ***"
 	sh "$EXEC_EXTERNAL"
 else
-	echo "Starting service..."
+	echo "Starting..."
 
-	fun_update_config
+	fun_update_config || return 1
 
 	EXEC_SRV_ARGS="-i $PATH_PID"
 	if [[ -f "$PATH_CONF" ]]; then
@@ -61,5 +68,14 @@ else
 	#echo "ARG [ $EXEC_SRV_ARGS ]"
 
 	$EXEC_SRV $EXEC_SRV_ARGS
+
+	echo "-----------------------"
+	echo "-- LIST PORT rsyslog --"
+	echo "-----------------------"
+	echo ""
+	netstat -lpn | grep rsyslog 
+	echo ""
+	echo "-----------------------"
+
 	fun_waiting
 fi
